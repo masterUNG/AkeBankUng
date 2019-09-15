@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1092246542877",
+    "firebase_url": "https://akebankung.firebaseio.com",
+    "project_id": "akebankung",
+    "storage_bucket": "akebankung.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092246542877:android:fa03db4a69d524483584f4",
+        "android_client_info": {
+          "package_name": "th.in.androidthai.ake_bank_ung"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1092246542877-863n86o570d2apcues8c3gehsvdvot4e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMi8jPd84jwb9tjuc3STaqLKXPw8z2B8s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092246542877-863n86o570d2apcues8c3gehsvdvot4e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,7 @@
+import 'package:ake_bank_ung/screens/my_service.dart';
 import 'package:ake_bank_ung/screens/my_style.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -9,6 +11,8 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   // Explicit
   final formKey = GlobalKey<FormState>();
+  String nameString, emailString, passwordString;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   // Method
   Widget nameText() {
@@ -24,12 +28,16 @@ class _RegisterState extends State<Register> {
         helperText: 'Type Your Name',
         helperStyle: TextStyle(color: Colors.pink),
         hintText: 'English Only',
-      ),validator: (String value){
+      ),
+      validator: (String value) {
         if (value.isEmpty) {
           return 'Please Fill Your Name in Blank';
-        }else {
+        } else {
           return null;
         }
+      },
+      onSaved: (String value) {
+        nameString = value;
       },
     );
   }
@@ -48,12 +56,16 @@ class _RegisterState extends State<Register> {
         helperText: 'Type Your Email',
         helperStyle: TextStyle(color: Colors.green),
         hintText: 'you@email.com',
-      ),validator: (String value){
+      ),
+      validator: (String value) {
         if (!((value.contains('@')) && (value.contains('.')))) {
           return 'Please keep Email Format';
         } else {
           return null;
         }
+      },
+      onSaved: (String value) {
+        emailString = value.trim();
       },
     );
   }
@@ -72,6 +84,16 @@ class _RegisterState extends State<Register> {
         helperStyle: TextStyle(color: Colors.purple),
         hintText: 'More 6 Charactor',
       ),
+      validator: (String value) {
+        if (value.length < 6) {
+          return 'Password More 6 Charactor';
+        } else {
+          return null;
+        }
+      },
+      onSaved: (String value) {
+        passwordString = value;
+      },
     );
   }
 
@@ -83,8 +105,9 @@ class _RegisterState extends State<Register> {
           begin: Alignment.topCenter,
         ),
       ),
-      child: Form(key: formKey,
-              child: ListView(
+      child: Form(
+        key: formKey,
+        child: ListView(
           padding: EdgeInsets.all(30.0),
           children: <Widget>[
             nameText(),
@@ -105,7 +128,62 @@ class _RegisterState extends State<Register> {
         print('You Click Register');
         if (formKey.currentState.validate()) {
           formKey.currentState.save();
+          print(
+              'name = $nameString, email = $emailString, password = $passwordString');
+          registerThread();
         }
+      },
+    );
+  }
+
+  Future<void> registerThread() async {
+    
+    await firebaseAuth
+        .createUserWithEmailAndPassword(
+            email: emailString, password: passwordString)
+        .then((response) {
+      print('Register Success');
+      setupDisplayName();
+    }).catchError((response) {
+      // print('Error = ${response.toString()}');
+      String title = response.code;
+      String message = response.message;
+      myAlert(title, message);
+    });
+  }
+
+  Future<void> setupDisplayName()async{
+
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    UserUpdateInfo userUpdateInfo = UserUpdateInfo();
+    userUpdateInfo.displayName = nameString;
+    firebaseUser.updateProfile(userUpdateInfo);
+
+    MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => MyService());
+    Navigator.of(context).pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route) => false);
+
+
+
+  }
+
+  void myAlert(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title, style: TextStyle(color: Colors.red),),
+          content: Text(message),
+          actions: <Widget>[okButton()],
+        );
+      },
+    );
+  }
+
+  Widget okButton() {
+    return FlatButton(
+      child: Text('OK'),
+      onPressed: () {
+        Navigator.of(context).pop();
       },
     );
   }

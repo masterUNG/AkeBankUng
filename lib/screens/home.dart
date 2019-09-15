@@ -1,5 +1,7 @@
+import 'package:ake_bank_ung/screens/my_service.dart';
 import 'package:ake_bank_ung/screens/my_style.dart';
 import 'package:ake_bank_ung/screens/register.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -12,6 +14,24 @@ class _HomeState extends State<Home> {
   double widthLogo = 100.0;
 
   // Method
+  @override
+  void initState() { 
+    super.initState();
+    checkStatus();
+  }
+
+  Future<void> checkStatus()async{
+
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    if (firebaseUser != null) {
+      MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => MyService());
+      Navigator.of(context).pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route) => false);
+    }
+
+  }
+
+
   Widget signUpButton() {
     return OutlineButton(
       shape: RoundedRectangleBorder(
